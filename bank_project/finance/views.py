@@ -15,7 +15,7 @@ def emi_calculator(request):
         emi = principal * monthly_rate * ((1 + monthly_rate) ** months) / (((1 + monthly_rate) ** months) - 1)
         result = round(emi, 2)
 
-    return render(request, 'finance_tools/emi_calculator.html', {'result': result})
+    return render(request, 'finance/emi_calculator.html', {'result': result})
 
 def sip_calculator(request):
     result = None
@@ -49,6 +49,44 @@ def rd_calculator(request):
 
     return render(request, 'finance/rd_calculator.html', {'result': result})
 
+def fd_calculator(request):
+    result = None
+    if request.method == 'POST':
+        principal = float(request.POST['principal'])
+        rate = float(request.POST['rate'])
+        years = int(request.POST['years'])
+
+        compounding_frequency = 4  # Quarterly compounding
+        rate_per_period = rate / (100 * compounding_frequency)
+        total_periods = years * compounding_frequency
+
+        maturity = principal * ((1 + rate_per_period) ** total_periods)
+        result = round(maturity, 2)
+
+    return render(request, 'finance/fd_calculator.html', {'result': result})
+
+def loan_eligibility_view(request):
+    result = None
+    if request.method == 'POST':
+        income = float(request.POST['monthly_income'])
+        expenses = float(request.POST['monthly_expenses'])
+        years = int(request.POST['tenure'])
+        rate = float(request.POST['interest_rate'])
+
+        available_income = income - expenses
+        monthly_rate = rate / (12 * 100)
+        tenure_months = years * 12
+
+        if monthly_rate == 0:
+            result = available_income * tenure_months
+        else:
+            result = available_income * (((1 + monthly_rate) ** tenure_months - 1) /
+                                         (monthly_rate * (1 + monthly_rate) ** tenure_months))
+            result = round(result, 2)
+
+    return render(request, 'finance/loan_eligibility_calculator.html', {'result': result})
+
+
 
 def retirement_savings_view(request):
     result = None
@@ -66,6 +104,8 @@ def retirement_savings_view(request):
         result = round(future_value, 2)
 
     return render(request, 'finance/retirement_calculator.html', {'result': result})
+
+
 
 
 def calculate_credit_card_balance(balance, annual_rate, months, min_payment_rate=0.05):
