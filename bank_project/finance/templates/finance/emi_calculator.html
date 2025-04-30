@@ -1,0 +1,12 @@
+<h2>EMI Calculator</h2>
+<form method="post">
+    {% csrf_token %}
+    Principal: <input type="number" name="principal" step="0.01"><br>
+    Annual Rate (%): <input type="number" name="rate" step="0.01"><br>
+    Tenure (years): <input type="number" name="tenure"><br>
+    <input type="submit" value="Calculate">
+</form>
+
+{% if result %}
+<p>Monthly EMI: ₹{{ result }}</p>
+{% endif %}
