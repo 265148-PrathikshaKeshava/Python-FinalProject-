@@ -3,6 +3,53 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render
 
+
+#Login
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+
+def login_view(request):
+    error = None
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # redirect to a home page or dashboard
+        else:
+            error = "Invalid username or password."
+
+    return render(request, 'finance/login.html', {'error': error})
+
+from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate
+from django.shortcuts import render, redirect
+
+def signup_view(request):
+    error = None
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password != confirm_password:
+            error = "Passwords do not match."
+        elif User.objects.filter(username=username).exists():
+            error = "Username already taken."
+        else:
+            user = User.objects.create_user(username=username, password=password)
+            login(request, user)
+            return redirect('home')  # redirect to home after successful signup
+
+    return render(request, 'finance/signup.html', {'error': error})
+
+
+
+@login_required
 def emi_calculator(request):
     result = None
     if request.method == 'POST':
@@ -138,11 +185,11 @@ def credit_card_calculator_view(request):
 def calculate_taxable_income(gross_income, deductions=50000):
     """
     Calculate taxable income after standard deduction.
-
+    
     Parameters:
     gross_income (float): Total gross income
     deductions (float): Deduction amount (default ₹50,000)
-
+    
     Returns:
     float: Taxable income
     """
@@ -151,6 +198,23 @@ def calculate_taxable_income(gross_income, deductions=50000):
 
     taxable_income = gross_income - deductions
     return round(max(taxable_income, 0), 2)
+
+
+def taxable_income_view(request):
+    result = None
+    if request.method == 'POST':
+        try:
+            gross_income = float(request.POST['gross_income'])
+            deductions = float(request.POST.get('deductions', 50000))  # Default ₹50,000
+            result = calculate_taxable_income(gross_income, deductions)
+        except (ValueError, KeyError, TypeError):
+            result = "Invalid input. Please enter valid numbers."
+
+    # Update the template name here (corrected the typo from .htmll to .html)
+    return render(request, 'finance/taxable_income.html', {'result': result})
+
+
+
 
 def plan_budget(income, fixed_expenses, variable_expenses):
     """
@@ -176,16 +240,6 @@ def plan_budget(income, fixed_expenses, variable_expenses):
         "Suggestion": suggestion
     }
 
-def taxable_income_view(request):
-    result = None
-    if request.method == 'POST':
-        try:
-            gross_income = float(request.POST['gross_income'])
-            deductions = float(request.POST.get('deductions', 50000))  # default 50,000
-            result = calculate_taxable_income(gross_income, deductions)
-        except (ValueError, KeyError):
-            result = "Invalid input. Please enter valid numbers."
-    return render(request, 'finance/taxable_income.html', {'result': result})
 
 
 def budget_planner_view(request):
@@ -200,42 +254,16 @@ def budget_planner_view(request):
             result = "Invalid input. Please enter valid numbers."
     return render(request, 'finance/budget_planner.html', {'result': result})
 
-def calculate_net_worth(assets: dict, liabilities: dict):
-    """
-    Calculate net worth from assets and liabilities.
 
-    Parameters:
-    assets (dict): Dictionary of asset values
-    liabilities (dict): Dictionary of liability values
-
-    Returns:
-    float: Net worth
-    """
-    if not isinstance(assets, dict) or not isinstance(liabilities, dict):
-        raise TypeError("Assets and liabilities must be dictionaries")
-
-    total_assets = sum(assets.values())
-    total_liabilities = sum(liabilities.values())
-
-    if total_assets < 0 or total_liabilities < 0:
-        raise ValueError("Asset and liability values must be non-negative")
-
-    return round(total_assets - total_liabilities, 2)
+def calculate_net_worth(assets, liabilities):
+    return round(assets - liabilities, 2)
 
 def net_worth_view(request):
     result = None
     if request.method == 'POST':
         try:
-            assets = {
-                'cash': float(request.POST['cash']),
-                'investments': float(request.POST['investments']),
-                'property': float(request.POST['property'])
-            }
-            liabilities = {
-                'loans': float(request.POST['loans']),
-                'credit_cards': float(request.POST['credit_cards']),
-                'other_debts': float(request.POST['other_debts'])
-            }
+            assets = float(request.POST.get('assets', 0))
+            liabilities = float(request.POST.get('liabilities', 0))
             result = calculate_net_worth(assets, liabilities)
         except (ValueError, KeyError):
             result = "Invalid input. Please enter valid numbers."
