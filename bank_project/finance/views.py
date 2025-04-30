@@ -27,6 +27,7 @@ def login_view(request):
 
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
+from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 
 def signup_view(request):
@@ -47,6 +48,11 @@ def signup_view(request):
 
     return render(request, 'finance/signup.html', {'error': error})
 
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
 
 @login_required
