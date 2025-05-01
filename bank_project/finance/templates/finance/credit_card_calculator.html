@@ -1,29 +1,128 @@
 {% extends 'finance/base.html' %}
 {% block content %}
-<h2>Credit Card Interest Calculator</h2>
-<form method="post" class="row g-3">
-    {% csrf_token %}
-    <div class="col-md-3">
-        <label class="form-label">Current Balance (₹)</label>
-        <input type="number" name="balance" class="form-control" required>
+    <div class="container my-5">
+        <div class="card shadow-lg p-4">
+            <h2 class="text-center text-danger mb-4">Credit Card Interest Calculator</h2>
+            
+            <form method="post" class="row g-4">
+                {% csrf_token %}
+                <div class="col-md-3">
+                    <label class="form-label">Current Balance (₹)</label>
+                    <input type="number" name="balance" class="form-control" placeholder="Enter balance" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Annual Interest Rate (%)</label>
+                    <input type="number" name="annual_rate" class="form-control" placeholder="Enter interest rate" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Months</label>
+                    <input type="number" name="months" class="form-control" placeholder="Enter number of months" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Minimum Payment Rate (default 5%)</label>
+                    <input type="number" name="min_payment_rate" class="form-control" placeholder="Optional" min="0" max="100">
+                </div>
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-danger w-100">Calculate Balance</button>
+                </div>
+            </form>
+
+            {% if result %}
+            <div class="alert alert-warning mt-4 p-3 rounded-3 shadow-sm">
+                <p><strong>Estimated Balance After Interest:</strong> ₹{{ result }}</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
-    <div class="col-md-3">
-        <label class="form-label">Annual Interest Rate (%)</label>
-        <input type="number" name="annual_rate" class="form-control" required>
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">Months</label>
-        <input type="number" name="months" class="form-control" required>
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">Minimum Payment Rate (default 5%)</label>
-        <input type="number" name="min_payment_rate" class="form-control" placeholder="Optional">
-    </div>
-    <div class="col-12 mt-3">
-        <button type="submit" class="btn btn-danger">Calculate Balance</button>
-    </div>
-</form>
-{% if result %}
-<div class="alert alert-warning mt-4">Estimated Balance After Interest: ₹{{ result }}</div>
-{% endif %}
 {% endblock %}
+
+Bank-Themed CSS (Add to base.html or an external CSS file):
+
+/* Body & General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f9fc;
+    margin: 0;
+    padding: 0;
+}
+
+/* Card Design */
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    max-width: 900px;
+    padding: 20px;
+    border-top: 5px solid #dc3545; /* Red for bank-related theme */
+}
+
+/* Form Styles */
+.form-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Input Fields */
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 12px;
+    font-size: 14px;
+    color: #333;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #dc3545; /* Red focus */
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.6);
+}
+
+/* Button */
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #c82333;
+}
+
+/* Alert Box */
+.alert-warning {
+    background-color: #fff3cd;
+    border-left: 5px solid #dc3545;
+    font-size: 16px;
+    color: #856404;
+    margin-top: 20px;
+}
+
+/* Page Header */
+h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #003366;
+    text-transform: uppercase;
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+    .card {
+        padding: 15px;
+    }
+
+    .form-control {
+        padding: 10px;
+    }
+
+    .btn-danger {
+        padding: 10px;
+    }
+}

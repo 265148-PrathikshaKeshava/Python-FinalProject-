@@ -1,29 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finance Calculators</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* General Body Styling */
         body {
             min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            overflow: hidden;
         }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: #003366;
+            border-bottom: 2px solid #00bcd4;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-brand {
+            color: #ffffff !important;
+            font-weight: bold;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff !important;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #00bcd4 !important;
+            transform: scale(1.1);
+        }
+
+        /* Smoke Effect for Navbar */
+        .navbar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            animation: smoke 3s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes smoke {
+            0% {
+                transform: scale(1);
+                opacity: 0.2;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.2;
+            }
+        }
+
+        /* Sidebar Styling */
         .sidebar {
+            background-color: #ffffff;
             height: 100%;
             padding-top: 20px;
             border-right: 1px solid #ddd;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
-        .nav-link.active {
+
+        .sidebar h5 {
+            color: #003366;
             font-weight: bold;
-            color: #0d6efd;
+            margin-bottom: 15px;
         }
+
+        .sidebar .nav-link {
+            color: #333;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #00bcd4;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar .nav-item {
+            margin-bottom: 10px;
+        }
+
+        .nav-link.active {
+            background-color: #00bcd4 !important;
+            color: white !important;
+        }
+
+        /* Main Content */
+        .main-content {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            transition: opacity 1s ease-in;
+            animation: fadeIn 1s forwards;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .main-content h2 {
+            color: #003366;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-text {
+            font-size: 18px;
+        }
+
+        .container-fluid {
+            margin-top: 50px;
+        }
+
+        /* Arrow Effect on Buttons */
+        button::after {
+            content: '→';
+            margin-left: 10px;
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        button:hover::after {
+            transform: translateX(5px);
+        }
+
+        /* Sidebar Link Hover Effects */
+        .sidebar .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar .nav-link::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #00bcd4;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* Hover effects for links in the sidebar */
+        .sidebar .nav-link.active {
+            background-color: #00bcd4 !important;
+            color: white !important;
+            transform: scale(1.05);
+        }
+
     </style>
 </head>
+
 <body>
 
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'home' %}">FinanceTools</a>
+            <a class="navbar-brand" href="{% url 'home' %}">U.ST Global BANK</a>
             <div class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
@@ -48,34 +234,63 @@
         </div>
     </nav>
 
+    <!-- Main Container -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 sidebar bg-light">
+                <h5>Finance Calculators</h5>
+                <ul class="nav flex-column px-3">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">EMI Calculator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'sip_calculator' %}">SIP Calculator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'fd_calculator' %}">FD Calculator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'rd_calculator' %}">RD Calculator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'retirement_savings_estimator' %}">Retirement Estimator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'loan_eligibility_estimator' %}">Loan Eligibility</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'credit_card_interest_calculator' %}">Credit Card Interest</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'taxable_income_calculator' %}">Taxable Income</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'simple_budget_planner' %}">Budget Planner</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'net_worth_calculator' %}">Net Worth Calculator</a>
+                    </li>
+                </ul>
+            </nav>
 
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav class="col-md-3 sidebar bg-light">
-            <h5 class="px-3">Calculators</h5>
-            <ul class="nav flex-column px-3">
-                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">EMI Calculator</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'sip_calculator' %}">SIP Calculator</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'fd_calculator' %}">FD Calculator</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'rd_calculator' %}">RD Calculator</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'retirement_savings_estimator' %}">Retirement Estimator</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'loan_eligibility_estimator' %}">Loan Eligibility</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'credit_card_interest_calculator' %}">Credit Card Interest</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'taxable_income_calculator' %}">Taxable Income</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'simple_budget_planner' %}">Budget Planner</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'net_worth_calculator' %}">Net Worth Calculator</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'loan_eligibility_estimator' %}">Loan Eligibility</a></li>
-
-            </ul>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="col-md-9 p-4">
-            {% block content %}
-            {% endblock %}
-        </main>
+            <!-- Main Content -->
+            <main class="col-md-9">
+                <div class="main-content">
+                    {% block content %}
+                    <h2 class="content-title">Welcome to Finance Tools</h2>
+                    <!-- Place content here (Calculator forms or information) -->
+                    {% endblock %}
+                </div>
+            </main>
+        </div>
     </div>
-</div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 U.ST Global BANK. All rights reserved.</p>
+    </footer>
+
 </body>
+
 </html>
